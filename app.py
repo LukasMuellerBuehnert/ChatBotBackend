@@ -6,7 +6,7 @@ app = FastAPI()
 # CORS für deine GitHub Pages URL erlauben
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://lukasmuellerbuehnert.github.io/ChatbotFrontend/"],
+    allow_origins=["https://lukasmuellerbuehnert.github.io"],
     allow_methods=["*"],
     allow_headers=["*"]
 )
