@@ -1,3 +1,34 @@
-{"url": "/kontakt", "title":"Kontakt", "text":"Kontaktformular unter /kontakt. Antwortzeit 2 Werktage."}
-{"url": "/impressum", "title":"Impressum", "text":"Impressum erreichbar unter /impressum."}
-{"url": "/account/reset", "title":"Passwort", "text":"Passwort zurücksetzen unter /account/reset."}
+{"url": "/oeffnungszeiten", "title":"Öffnungszeiten", "text":"Unsere Öffnungszeiten: Mo–Fr 9–18 Uhr, Sa 10–14 Uhr. Sonn-/Feiertage geschlossen."}
+{"url": "/kontakt", "title":"Kontakt", "text":"Kontaktformular unter /kontakt. Antwortzeit in der Regel 1–2 Werktage."}
+{"url": "/impressum", "title":"Impressum", "text":"Rechtliche Anbieterkennzeichnung: siehe /impressum."}
+{"url": "/datenschutz", "title":"Datenschutz", "text":"Informationen zur Datenverarbeitung und deinen Rechten: /datenschutz."}
+{"url": "/agb", "title":"AGB", "text":"Unsere Allgemeinen Geschäftsbedingungen findest du unter /agb."}
+{"url": "/account/registrieren", "title":"Konto anlegen", "text":"Ein Kundenkonto kannst du kostenfrei unter /account/registrieren erstellen."}
+{"url": "/account/login", "title":"Login", "text":"Zum Einloggen gehe auf /account/login."}
+{"url": "/account/reset", "title":"Passwort zurücksetzen", "text":"Passwort-Reset unter /account/reset. Link kommt per E-Mail (10 Min gültig)."}
+{"url": "/newsletter/anmelden", "title":"Newsletter", "text":"Newsletter-Anmeldung unter /newsletter/anmelden (Double-Opt-In). Abmeldung jederzeit in jeder Mail."}
+{"url": "/bestellung/aufgeben", "title":"Bestellung aufgeben", "text":"Produkte in den Warenkorb legen und an der Kasse bezahlen. Gastbestellung möglich."}
+{"url": "/bestellung/aendern", "title":"Bestellung ändern", "text":"Solange noch nicht versandt, Änderungen über /kontakt mit Bestellnummer."}
+{"url": "/bestellung/stornieren", "title":"Stornierung", "text":"Stornieren möglich bis zum Versand. Danach bitte Retoure nutzen."}
+{"url": "/zahlung/arten", "title":"Zahlungsarten", "text":"Wir akzeptieren Kreditkarte, PayPal, SEPA-Lastschrift, Sofortüberweisung, Rechnung (Prüfung vorbehalten)."}
+{"url": "/rechnung", "title":"Rechnung", "text":"Rechnungen werden nach Versand per E-Mail versendet und sind im Konto abrufbar."}
+{"url": "/preise/steuer", "title":"Preise & MwSt", "text":"Alle Preise inkl. gesetzlicher MwSt., zzgl. Versandkosten sofern nicht anders angegeben."}
+{"url": "/versand/laender", "title":"Lieferländer", "text":"Lieferung innerhalb DE, AT, CH. Details und Kosten: /versand/laender."}
+{"url": "/versand/kosten", "title":"Versandkosten", "text":"Innerhalb DE ab 49 € versandkostenfrei, sonst 4,90 €. AT/CH siehe /versand/kosten."}
+{"url": "/versand/zeiten", "title":"Lieferzeiten", "text":"DE: 2–3 Werktage, AT/CH: 3–5 Werktage. Express gegen Aufpreis verfügbar."}
+{"url": "/tracking", "title":"Sendungsverfolgung", "text":"Tracking-Link kommt per E-Mail nach Versand oder im Konto unter Bestellungen."}
+{"url": "/retoure", "title":"Retoure", "text":"Kostenlose Retoure innerhalb 30 Tagen über /retoure (Rücksendeetikett generieren)."}
+{"url": "/widerruf", "title":"Widerruf", "text":"Du kannst binnen 14 Tagen ohne Angabe von Gründen widerrufen. Formular: /widerruf."}
+{"url": "/garantie", "title":"Garantie", "text":"Gesetzliche Gewährleistung 24 Monate. Herstellergarantien siehe Produktseite."}
+{"url": "/support/technik", "title":"Technischer Support", "text":"Technikfragen: /support/technik oder E-Mail an support@example.com."}
+{"url": "/status", "title":"Systemstatus", "text":"Aktuelle Störungen und Wartungen unter /status."}
+{"url": "/barrierefreiheit", "title":"Barrierefreiheit", "text":"Erklärung zur Barrierefreiheit und Kontakt: /barrierefreiheit."}
+{"url": "/cookies", "title":"Cookies", "text":"Cookie-Richtlinie und Opt-Out unter /cookies."}
+{"url": "/browser", "title":"Browser-Support", "text":"Unterstützt: aktuelle Versionen von Chrome, Firefox, Safari, Edge."}
+{"url": "/standorte", "title":"Standorte", "text":"Filialen & Abholstationen mit Öffnungszeiten: /standorte."}
+{"url": "/karriere", "title":"Karriere", "text":"Offene Stellen und Bewerbungen unter /karriere."}
+{"url": "/termine", "title":"Terminbuchung", "text":"Beratungstermine online buchen: /termine."}
+{"url": "/rabatte", "title":"Gutscheine & Rabatte", "text":"Gutscheincodes im Warenkorb einlösen. Bedingungen siehe /rabatte."}
+{"url": "/b2b", "title":"Geschäftskunden", "text":"B2B-Angebote, Sammelbestellungen, Zahlungsziele: /b2b."}
+{"url": "/selbstabholung", "title":"Abholung", "text":"Click & Collect innerhalb von 2 Std. möglich. Abholhinweis per E-Mail."}
+{"url": "/kontakt/notfall", "title":"Notfallkontakt", "text":"Außerhalb der Zeiten: Notfall-Mail notfall@example.com (nur kritische Fälle)."}
