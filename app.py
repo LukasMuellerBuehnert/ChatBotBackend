@@ -3,6 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from rank_bm25 import BM25Okapi
 import json, os
+from groq import Groq
+
+client = Groq(api_key=os.environ["GROQ_API_KEY"])
+
+SYSTEM = (
+  "Du bist ein Website-Assistent. Antworte kurz auf der Sprache, in der sich der Fragesteller ausdrückt, "
+  "nur basierend auf den bereitgestellten Auszügen. "
+  "Wenn unklar: sag es ehrlich und verweise auf /kontakt."
+)
 
 app = FastAPI()
 
@@ -28,14 +37,32 @@ class Msg(BaseModel):
 @app.get("/healthz")
 def health(): return {"ok": True, "docs": len(docs)}
 
+def llm_answer(question: str, snippets: list[dict]) -> str:
+    ctx = "\n".join([f"- {d['text']} (Quelle: {d['url']})" for d in snippets])
+    prompt = f"Frage: {question}\n\nRelevante Auszüge:\n{ctx}\n\nAntwort:"
+    r = client.chat.completions.create(
+        model="llama-3.1-8b-instant",
+        messages=[{"role":"system","content": SYSTEM},{"role":"user","content": prompt}],
+        temperature=0.2,
+    )
+    return r.choices[0].message.content.strip()
+    
 @app.post("/chat")
 def chat(m: Msg):
     if not bm25 or not docs:
         return {"answer": "Keine Wissensbasis geladen.", "sources": []}
+
     tokens = tokenize(m.message)
     scores = bm25.get_scores(tokens)
-    i = int(max(range(len(scores)), key=lambda k: scores[k])) if scores.size else -1
-    if i == -1 or scores[i] < THRESHOLD:
+    if not scores.size:
         return {"answer": "Weiß ich nicht. Bitte /kontakt nutzen.", "sources": []}
-    d = docs[i]
-    return {"answer": d["text"], "sources": [d["url"]]}
+
+    # Top-3 Chunks auswählen
+    top_k_idx = sorted(range(len(scores)), key=lambda k: scores[k], reverse=True)[:3]
+    if scores[top_k_idx[0]] < THRESHOLD:
+        return {"answer": "Weiß ich nicht. Bitte /kontakt nutzen.", "sources": []}
+    snippets = [docs[i] for i in top_k_idx]
+
+    # LLM formulieren lassen
+    ans = llm_answer(m.message, snippets)
+    return {"answer": ans, "sources": [s["url"] for s in snippets]}
