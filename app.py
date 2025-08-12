@@ -99,7 +99,7 @@ def smalltalk_llm(intent, lang):
     r = client.chat.completions.create(
         model=GROQ_MODEL,
         messages=[{"role":"system","content":
-           "You are a website assistant, focus on helping the user. One very short, friendly sentence in the target language. Don't ask the user how he is. No emojis unless user used them."},
+           "You are a website assistant, focus on helping the user. One very short, friendly sentence in the target language. Don't ask the user how he is. If the question has the intent commonsense answer only short and only if it is a safe topic. No emojis unless user used them."},
                   {"role":"user","content": f"Target language: {lang}\nIntent: {intent}"}],
         temperature=0.2,
     )
