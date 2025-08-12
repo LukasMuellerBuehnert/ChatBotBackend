@@ -110,7 +110,7 @@ def llm_answer(question: str, snippets: list[dict], lang: str) -> str:
     ctx = "\n".join([f"- {d['text']} (Quelle: {d['url']})" for d in snippets])
     sys = (
       "You are a website assistant. Answer briefly in the requested target language. "
-      "Only use the provided excerpts; if insufficient, say you don't know and refer to /kontakt."
+      "Only use the provided excerpts; if insufficient, try using commonsense if the question is not about specific things or say you don't know and refer to /kontakt."
     )
     prompt = f"Target language: {lang}\nQuestion: {question}\n\nExcerpts:\n{ctx}\n\nAnswer:"
     r = client.chat.completions.create(
@@ -168,11 +168,13 @@ def chat(m: Msg):
     # 4) BM25 → Top-3
     scores = bm25.get_scores(tokenize(query))
     if getattr(scores, "size", 0) == 0:
-        return {"answer": "Weiß ich nicht. Bitte /kontakt nutzen.", "sources": []}
+        ans = llm_answer(m.message, [], lang)
+        return {"answer": ans, "sources": []}
 
     top_idx = sorted(range(len(scores)), key=lambda k: scores[k], reverse=True)[:3]
     if scores[top_idx[0]] < THRESHOLD:
-        return {"answer": "Weiß ich nicht. Bitte /kontakt nutzen.", "sources": []}
+        ans = llm_answer(m.message, [], lang)
+        return {"answer": ans, "sources": []}
 
     snippets = [docs[i] for i in top_idx]
 
