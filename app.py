@@ -8,7 +8,7 @@ import json, os, re
 
 # ---------- Einstellungen ----------
 THRESHOLD = 1.0                    # Mindestscore für BM25
-ALWAYS_LABELS = ["greeting","thanks","goodbye","unknown"]  # feste Intents
+ALWAYS_LABELS = ["greeting","thanks","goodbye", "commonsense"]  # feste Intents
 GROQ_MODEL = "llama-3.1-8b-instant"
 
 # ---------- Hilfsfunktionen ----------
@@ -91,15 +91,20 @@ def classify_lang_intent(q: str):
     except Exception:
         return "en", "unknown"
 
-def smalltalk_by_intent(intent: str, lang: str):
-    de = {"greeting":"Hi! Wie kann ich helfen?",
-          "thanks":"Gern! 😊",
-          "goodbye":"Mach’s gut!"}
-    en = {"greeting":"Hi! How can I help?",
-          "thanks":"You're welcome! 😊",
-          "goodbye":"Take care!"}
-    tbl = en if lang.startswith("en") else de
-    return tbl.get(intent)
+
+
+def smalltalk_llm(intent, lang):
+    if intent not in {"greeting","thanks","goodbye","commonsense"}:
+        return None
+    r = client.chat.completions.create(
+        model=GROQ_MODEL,
+        messages=[{"role":"system","content":
+           "One very short, friendly sentence in the target language. No emojis unless user used them."},
+                  {"role":"user","content": f"Target language: {lang}\nIntent: {intent}"}],
+        temperature=0.2,
+    )
+    return r.choices[0].message.content.strip()
+
 
 def llm_answer(question: str, snippets: list[dict], lang: str) -> str:
     ctx = "\n".join([f"- {d['text']} (Quelle: {d['url']})" for d in snippets])
@@ -148,16 +153,11 @@ def chat(m: Msg):
 
     # 1) Sprache + Intent also das request parsing
     lang, intent = classify_lang_intent(m.message)
-
-    # >>> Debug-Ausgabe <<<
-    print(f"[DEBUG] Eingabe: {m.message}")
-    print(f"[DEBUG] Erkannte Sprache: {lang}")
-    print(f"[DEBUG] Erkannter Intent: {intent}")
     
     # 2) Smalltalk direkt
-    st = smalltalk_by_intent(intent, lang)
+    st = smalltalk_llm(intent, lang)
     if st:
-        return {"answer": st, "sources": []}
+        return {"answer": st, "sources":[]}
 
     # 3) Query bauen: Originalfrage + (Intent-Label) + (passender Titel/Text als Booster)
     query = m.message
