@@ -11,6 +11,7 @@ ALWAYS_LABELS = ["greeting","thanks","goodbye","unknown"]  # feste Intents
 GROQ_MODEL = "llama-3.1-8b-instant"
 
 # ---------- Hilfsfunktionen ----------
+# fold sorgt dafür das Labels egal ob aus der Database oder vom LLM einheitlich geschrieben sind
 def fold(s: str) -> str:
     # einfache Normalisierung (für Label-Matching)
     s = s.lower().strip()
@@ -19,6 +20,7 @@ def fold(s: str) -> str:
     s = re.sub(r"\s+", " ", s)
     return s
 
+# tokenizer nimmt chunks und zerlegt sie in kleingeschriebene Wörter
 def tokenize(s: str):
     return re.findall(r"\w+", s.lower(), flags=re.UNICODE)
 
@@ -38,10 +40,12 @@ if os.path.exists(PATH):
                 pass
 
 # Labels aus den Titeln + feste Intents
+# Labelliste wird erstellt aus Datensatz und Labels die immer gelten
 labels_from_data = {d["_title_fold"]: d for d in docs}
 LABELS = list(labels_from_data.keys()) + ALWAYS_LABELS
 
 # ---------- BM25 Index ----------
+# tokenizer nimmt chunks und zerlegt sie in kleingeschriebene Wörteroka
 corpus = [tokenize(d["text"]) for d in docs]
 bm25 = BM25Okapi(corpus) if docs else None
 
@@ -49,9 +53,8 @@ bm25 = BM25Okapi(corpus) if docs else None
 client = Groq(api_key=os.environ["GROQ_API_KEY"])
 
 def classify_lang_intent(q: str):
-    """
-    Gibt (lang, intent) zurück. intent ∈ LABELS oder 'unknown'.
-    """
+    """ Gibt (lang, intent) zurück. intent ∈ LABELS oder 'unknown'. """
+    # hier wird ein string aus den labels erstellt
     labels_str = ", ".join(LABELS)
     prompt = (
       "Tasks:\n"
@@ -61,15 +64,17 @@ def classify_lang_intent(q: str):
       'Return ONLY JSON: {"lang":"..","intent":".."}\n'
       f"User: {q}"
     )
+    # api call
     r = client.chat.completions.create(
         model=GROQ_MODEL,
         messages=[{"role":"system","content":"Answer with valid JSON only."},
                   {"role":"user","content": prompt}],
+        # deterministisch
         temperature=0
     ).choices[0].message.content
     try:
         obj = json.loads(r)
-        lang = (obj.get("lang") or "de").lower()
+        lang = (obj.get("lang") or "en").lower()
         intent_raw = (obj.get("intent") or "unknown").lower().strip()
         intent_fold = fold(intent_raw)
         # wenn LLM den Originaltitel zurückgibt (nicht gefoldet): auch akzeptieren
@@ -83,7 +88,7 @@ def classify_lang_intent(q: str):
             intent = "unknown"
         return lang, intent
     except Exception:
-        return "de", "unknown"
+        return "en", "unknown"
 
 def smalltalk_by_intent(intent: str, lang: str):
     de = {"greeting":"Hi! Wie kann ich helfen?",
@@ -131,9 +136,14 @@ def chat(m: Msg):
     if not bm25 or not docs:
         return {"answer": "Keine Wissensbasis geladen.", "sources": []}
 
-    # 1) Sprache + Intent
+    # 1) Sprache + Intent also das request parsing
     lang, intent = classify_lang_intent(m.message)
 
+    # >>> Debug-Ausgabe <<<
+    print(f"[DEBUG] Eingabe: {m.message}")
+    print(f"[DEBUG] Erkannte Sprache: {lang}")
+    print(f"[DEBUG] Erkannter Intent: {intent}")
+    
     # 2) Smalltalk direkt
     st = smalltalk_by_intent(intent, lang)
     if st:
