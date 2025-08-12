@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Response
 from pydantic import BaseModel
 from rank_bm25 import BM25Okapi
 from groq import Groq
@@ -116,12 +117,16 @@ def llm_answer(question: str, snippets: list[dict], lang: str) -> str:
     return r.choices[0].message.content.strip()
 
 # ---------- FastAPI ----------
+
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://lukasmuellerbuehnert.github.io"],  # Origin ohne Pfad!
-    allow_methods=["*"],
-    allow_headers=["*"]
+    allow_origins=["https://lukasmuellerbuehnert.github.io"],  # exakt die Origin
+    allow_methods=["POST","OPTIONS"],      # OPTIONS explizit erlauben
+    allow_headers=["Content-Type"],        # was du wirklich brauchst
+    allow_credentials=False,
+    max_age=3600,
 )
 
 class Msg(BaseModel):
@@ -131,6 +136,11 @@ class Msg(BaseModel):
 def health():
     return {"ok": True, "docs": len(docs), "labels": len(LABELS)}
 
+@app.options("/chat")
+def options_chat():
+    # Preflight sauber beantworten
+    return Response(status_code=204)
+    
 @app.post("/chat")
 def chat(m: Msg):
     if not bm25 or not docs:
