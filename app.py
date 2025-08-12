@@ -8,7 +8,7 @@ import json, os, re
 
 # ---------- Einstellungen ----------
 THRESHOLD = 1.0                    # Mindestscore für BM25
-ALWAYS_LABELS = ["greeting","thanks","goodbye", "commonsense"]  # feste Intents
+ALWAYS_LABELS = ["greeting","thanks","goodbye","smalltalk"]  # feste Intents
 GROQ_MODEL = "llama-3.1-8b-instant"
 
 # ---------- Hilfsfunktionen ----------
@@ -94,12 +94,12 @@ def classify_lang_intent(q: str):
 
 
 def smalltalk_llm(intent, lang):
-    if intent not in {"greeting","thanks","goodbye","commonsense"}:
+    if intent not in {"greeting","thanks","goodbye","smalltalk"}:
         return None
     r = client.chat.completions.create(
         model=GROQ_MODEL,
         messages=[{"role":"system","content":
-           "You are a website assistant, focus on helping the user. One very short, friendly sentence in the target language. Don't ask the user how he is. If the question has the intent commonsense answer only short and only if it is a safe topic. No emojis unless user used them."},
+           "You are a website assistant, focus on helping the user. One very short, friendly sentence in the target language. Don't ask the user how he is. If the question has the intent smalltalk answer only short and only if it is a safe topic. No emojis unless user used them."},
                   {"role":"user","content": f"Target language: {lang}\nIntent: {intent}"}],
         temperature=0.2,
     )
