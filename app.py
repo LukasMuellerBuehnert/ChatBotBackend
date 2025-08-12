@@ -19,8 +19,8 @@ def fold(s: str) -> str:
     s = re.sub(r"\s+", " ", s)
     return s
 
-def tokenize(s: str): 
-    return re.findall(r"\p{L}+\p{M}*|\d+", s.lower(), flags=re.UNICODE)
+def tokenize(s: str):
+    return re.findall(r"\w+", s.lower(), flags=re.UNICODE)
 
 # ---------- Daten laden ----------
 PATH = "data/faq.jsonl"
