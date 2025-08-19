@@ -122,14 +122,32 @@ def llm_answer(question: str, snippets: list[dict], lang: str) -> str:
     return r.choices[0].message.content.strip()
 
 # ---------- FastAPI ----------
-
-
 app = FastAPI()
+
+ALLOWED_ORIGINS = [
+    # GitHub Pages
+    "https://lukasmuellerbuehnert.github.io",
+
+    # WordPress lokal (LocalWP / Hosts)
+    "http://testingground.local",
+    "http://localhost",
+    "http://127.0.0.1",
+
+    # ggf. Dev-Ports
+    "http://localhost:80",
+    "http://localhost:8080",
+    "http://localhost:3000",
+
+    # später live (anpassen)
+    "https://mdholidays.gr",
+    "https://www.mdholidays.gr",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["https://lukasmuellerbuehnert.github.io"],  # exakt die Origin
-    allow_methods=["POST","OPTIONS"],      # OPTIONS explizit erlauben
-    allow_headers=["Content-Type"],        # was du wirklich brauchst
+    allow_origins=ALLOWED_ORIGINS,      # exakt, ohne Slash
+    allow_methods=["POST", "OPTIONS"],  # Preflight inklusive
+    allow_headers=["Content-Type"],
     allow_credentials=False,
     max_age=3600,
 )
